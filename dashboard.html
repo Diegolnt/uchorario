@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCHorario - Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href='https://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet'>
+</head>
+<body>
+    <img src="https://uniconexed.org/wp-content/uploads/2022/02/Pontificia-Universidad-Catolica-de-Chile-Logo.png" 
+         alt="Logo UC" 
+         class="logo-uc">
+    
+    <div class="container-top">
+        <div class="dashboard-box">
+            <div class="dashboard-header">
+                <h1>UCHorario</h1>
+                <button onclick="goToSelection()" class="btn-settings">⚙️ Editar Amigos</button>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-button active" onclick="showTab('now')">¿Qué están haciendo AHORA?</button>
+                <button class="tab-button" onclick="showTab('search')">Consultar por día/hora</button>
+            </div>
+            
+            <!-- Tab: Estado Actual -->
+            <div id="tabNow" class="tab-content active">
+                <div class="status-header">
+                    <h2>Estado Actual</h2>
+                    <button onclick="refreshNow()" class="btn-refresh">🔄 Actualizar</button>
+                </div>
+                <p id="currentDateTime" class="datetime-display"></p>
+                <div id="statusContainer" class="status-container">
+                    <p class="loading">Cargando...</p>
+                </div>
+            </div>
+            
+            <!-- Tab: Consulta por Día/Hora -->
+            <div id="tabSearch" class="tab-content">
+                <h2>Consultar Horarios</h2>
+                <div class="search-form">
+                    <div class="form-group">
+                        <label for="daySelect">Día:</label>
+                        <select id="daySelect" class="form-select">
+                            <option value="Lunes">Lunes</option>
+                            <option value="Martes">Martes</option>
+                            <option value="Miercoles">Miércoles</option>
+                            <option value="Jueves">Jueves</option>
+                            <option value="Viernes">Viernes</option>
+                            <option value="Sabado">Sábado</option>
+                            <option value="Domingo">Domingo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="timeInput">Hora:</label>
+                        <input type="time" id="timeInput" class="form-input" value="10:00">
+                    </div>
+                    <div class="form-group">
+                        <button onclick="searchSchedule()" class="btn-primary">Buscar</button>
+                    </div>
+                </div>
+                <div id="searchResults" class="status-container">
+                    <p class="info-message">Selecciona un día y hora para consultar</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="stars">
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/storage.js"></script>
+    <script>
+        let friends = [];
+
+        // Inicializar
+        window.addEventListener('DOMContentLoaded', () => {
+            friends = Storage.getFriends();
+            
+            if (friends.length === 0) {
+                window.location.href = 'seleccion.html';
+                return;
+            }
+            
+            loadCurrentStatus();
+            setCurrentDay();
+        });
+
+        // Cambiar entre tabs
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-button');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            if (tabName === 'now') {
+                document.getElementById('tabNow').classList.add('active');
+                buttons[0].classList.add('active');
+            } else {
+                document.getElementById('tabSearch').classList.add('active');
+                buttons[1].classList.add('active');
+            }
+        }
+
+        // Establecer día actual en el selector
+        function setCurrentDay() {
+            const days = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
+            const today = days[new Date().getDay()];
+            document.getElementById('daySelect').value = today;
+        }
+
+        // Cargar estado actual
+        async function loadCurrentStatus() {
+            const container = document.getElementById('statusContainer');
+            const dateTimeDisplay = document.getElementById('currentDateTime');
+            
+            container.innerHTML = '<p class="loading">Cargando...</p>';
+            
+            try {
+                const data = await API.getCurrentStatus(friends);
+                
+                if (!data || !data.statuses) {
+                    throw new Error('No se pudieron cargar los datos');
+                }
+                
+                // Mostrar fecha y hora actual
+                const now = new Date();
+                dateTimeDisplay.textContent = `${data.currentDay} - ${data.currentTime}`;
+                
+                // Mostrar estados
+                container.innerHTML = '';
+                data.statuses.forEach(status => {
+                    const card = createStatusCard(status);
+                    container.appendChild(card);
+                });
+                
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = '<p class="error-message">Error al cargar los datos. Intenta de nuevo.</p>';
+            }
+        }
+
+        // Buscar por día y hora
+        async function searchSchedule() {
+            const day = document.getElementById('daySelect').value;
+            const time = document.getElementById('timeInput').value;
+            const container = document.getElementById('searchResults');
+            
+            if (!time) {
+                alert('Por favor, selecciona una hora');
+                return;
+            }
+            
+            container.innerHTML = '<p class="loading">Buscando...</p>';
+            
+            try {
+                const data = await API.getScheduleByDateTime(friends, day, time);
+                
+                if (!data || !data.statuses) {
+                    throw new Error('No se pudieron cargar los datos');
+                }
+                
+                container.innerHTML = '';
+                container.innerHTML = `<p class="search-info">Resultados para: ${day} a las ${time}</p>`;
+                
+                data.statuses.forEach(status => {
+                    const card = createStatusCard(status);
+                    container.appendChild(card);
+                });
+                
+            } catch (error) {
+                console.error('Error:', error);
+                container.innerHTML = '<p class="error-message">Error al buscar. Intenta de nuevo.</p>';
+            }
+        }
+
+        // Crear tarjeta de estado
+        function createStatusCard(status) {
+            const card = document.createElement('div');
+            card.className = `status-card ${status.status}`;
+            
+            let icon = status.status === 'busy' ? '📚' : '✅';
+            if (status.status === 'unknown') icon = '❓';
+            
+            let details = '';
+            if (status.status === 'busy' && status.subject) {
+                details = `
+                    <div class="status-details">
+                        <p><strong>Asignatura:</strong> ${status.subject}</p>
+                        ${status.room ? `<p><strong>Sala:</strong> ${status.room}</p>` : ''}
+                        <p><strong>Horario:</strong> ${status.startTime} - ${status.endTime}</p>
+                    </div>
+                `;
+            }
+            
+            card.innerHTML = `
+                <div class="status-header-card">
+                    <span class="status-icon">${icon}</span>
+                    <h3>${status.person}</h3>
+                </div>
+                <p class="status-message">${status.message}</p>
+                ${details}
+            `;
+            
+            return card;
+        }
+
+        // Refrescar estado actual
+        function refreshNow() {
+            loadCurrentStatus();
+        }
+
+        // Ir a selección de amigos
+        function goToSelection() {
+            window.location.href = 'seleccion.html';
+        }
+    </script>
+</body>
+</html>

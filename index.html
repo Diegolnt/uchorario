@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UCHorario - Inicio</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href='https://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet'>
+</head>
+<body>
+    <img src="https://uniconexed.org/wp-content/uploads/2022/02/Pontificia-Universidad-Catolica-de-Chile-Logo.png" 
+         alt="Logo UC" 
+         class="logo-uc">
+    
+    <div class="container-center">
+        <div class="welcome-box">
+            <h1>UCHorario</h1>
+            <p>Bienvenido a UCHorario, la plataforma para gestionar y consultar los horarios universitarios de manera fácil y eficiente.</p>
+            <p>Aquí podrás ver en qué están tus amigos en tiempo real, organizar tus clases y coordinar actividades académicas de forma sencilla.</p>
+            <p>Con UCHorario podrás:</p>
+            <ul>
+                <li>Ver qué están haciendo tus amigos ahora mismo</li>
+                <li>Consultar horarios por día y hora</li>
+                <li>Agregar y gestionar tu lista de amigos</li>
+                <li>Todo guardado localmente en tu navegador</li>
+            </ul>
+            <p>No pierdas más tiempo preguntando dónde están tus compañeros. ¡Únete a UCHorario y simplifica tu vida universitaria!</p>
+            <button onclick="startApp()" class="btn-primary">Comenzar</button>
+        </div>
+    </div>
+
+    <div class="stars">
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/storage.js"></script>
+    <script>
+        function startApp() {
+            // Verificar si ya tiene amigos guardados
+            if (Storage.hasFriends()) {
+                window.location.href = 'dashboard.html';
+            } else {
+                window.location.href = 'seleccion.html';
+            }
+        }
+    </script>
+</body>
+</html>
