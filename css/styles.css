@@ -325,14 +325,34 @@ button {
   background: rgba(244, 67, 54, 0.1);
 }
 
-.status-card.free {
+.status-card.free-campus {
+  border-color: rgba(255, 193, 7, 0.5);
+  background: rgba(255, 193, 7, 0.1);
+}
+
+.status-card.free-away {
   border-color: rgba(76, 175, 80, 0.5);
   background: rgba(76, 175, 80, 0.1);
+}
+
+.status-card.free {
+  border-color: rgba(158, 158, 158, 0.5);
+  background: rgba(158, 158, 158, 0.1);
 }
 
 .status-card.unknown {
   border-color: rgba(255, 152, 0, 0.5);
   background: rgba(255, 152, 0, 0.1);
+}
+
+.campus-indicator {
+  font-size: 0.9em;
+  font-weight: bold;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  margin: 10px 0;
+  text-align: center !important;
 }
 
 .status-header-card {

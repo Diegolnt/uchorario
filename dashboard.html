@@ -232,20 +232,58 @@
         // Crear tarjeta de estado
         function createStatusCard(status) {
             const card = document.createElement('div');
-            card.className = `status-card ${status.status}`;
             
-            let icon = status.status === 'busy' ? '📚' : '✅';
-            if (status.status === 'unknown') icon = '❓';
+            // Determinar clase CSS y icono
+            let cardClass = status.status;
+            let icon = '❓';
             
+            if (status.status === 'busy') {
+                icon = '📚';
+            } else if (status.status === 'free') {
+                if (status.inCampus) {
+                    icon = '☕'; // En la U pero libre
+                    cardClass = 'free-campus';
+                } else {
+                    icon = '🏠'; // No está en la U
+                    cardClass = 'free-away';
+                }
+            }
+            
+            card.className = `status-card ${cardClass}`;
+            
+            // Construir detalles
             let details = '';
+            
             if (status.status === 'busy' && status.subject) {
                 details = `
                     <div class="status-details">
                         <p><strong>Asignatura:</strong> ${status.subject}</p>
-                        ${status.room ? `<p><strong>Sala:</strong> ${status.room}</p>` : ''}
+                        <p><strong>Bloque:</strong> ${status.block}</p>
                         <p><strong>Horario:</strong> ${status.startTime} - ${status.endTime}</p>
                     </div>
                 `;
+            } else if (status.status === 'free') {
+                // Información adicional para personas libres
+                let extraInfo = '';
+                
+                if (status.nextClass) {
+                    extraInfo += `<p><strong>Próxima clase:</strong> ${status.nextClass.Asignatura} (Bloque ${status.nextClass.Bloque})</p>`;
+                }
+                
+                if (status.previousClass) {
+                    extraInfo += `<p><strong>Última clase:</strong> ${status.previousClass.Asignatura} (Bloque ${status.previousClass.Bloque})</p>`;
+                }
+                
+                if (extraInfo) {
+                    details = `<div class="status-details">${extraInfo}</div>`;
+                }
+            }
+            
+            // Indicador de presencia en campus
+            let campusIndicator = '';
+            if (status.status === 'free') {
+                const campusText = status.inCampus ? '🟢 En la U' : '🔴 No está en la U';
+                campusIndicator = `<p class="campus-indicator">${campusText}</p>`;
             }
             
             card.innerHTML = `
@@ -254,6 +292,7 @@
                     <h3>${status.person}</h3>
                 </div>
                 <p class="status-message">${status.message}</p>
+                ${campusIndicator}
                 ${details}
             `;
             
